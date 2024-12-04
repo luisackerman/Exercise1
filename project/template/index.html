@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LinkedList Operations</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        header {
+            background: #6c63ff;
+            color: #fff;
+            padding: 20px 10px;
+            text-align: center;
+        }
+
+        main {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        h1, h2 {
+            color: #6c63ff;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group input, .form-group button {
+            padding: 10px;
+            margin-right: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .form-group button {
+            background-color: #6c63ff;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+
+        .form-group button:hover {
+            background-color: #5754d3;
+        }
+
+        pre {
+            background: #f9f9f9;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+
+        footer {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 0.9rem;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>LinkedList Operations</h1>
+    </header>
+    <main>
+        <section class="form-group">
+            <input type="text" id="data-input" placeholder="Enter data">
+            <button onclick="addNode()">Add Node</button>
+        </section>
+        <section class="form-group">
+            <button onclick="removeBeginning()">Remove from Beginning</button>
+            <button onclick="removeAtEnd()">Remove from End</button>
+        </section>
+        <section class="form-group">
+            <input type="text" id="remove-data-input" placeholder="Enter data to remove">
+            <button onclick="removeAt()">Remove Specific Node</button>
+        </section>
+        <h2>LinkedList Contents:</h2>
+        <pre id="list-display">[]</pre>
+    </main>
+    <footer>
+        <p>&copy; 2024 LinkedList Manager. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+        async function updateDisplay() {
+            try {
+                const response = await fetch('/display');
+                const result = await response.json();
+                document.getElementById('list-display').textContent = JSON.stringify(result.list);
+            } catch (error) {
+                alert('Failed to fetch list: ' + error);
+            }
+        }
+
+        async function addNode() {
+            const data = document.getElementById('data-input').value;
+            try {
+                const response = await fetch('/add', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: `data=${encodeURIComponent(data)}`
+                });
+                const result = await response.json();
+                updateDisplay();
+                alert('Added: ' + data);
+            } catch (error) {
+                alert('Failed to add node: ' + error);
+            }
+        }
+
+        async function removeBeginning() {
+            try {
+                const response = await fetch('/remove_beginning', {
+                    method: 'POST',
+                });
+                const result = await response.json();
+                updateDisplay();
+                alert('Removed from beginning: ' + result.removed);
+            } catch (error) {
+                alert('Failed to remove from beginning: ' + error);
+            }
+        }
+
+        async function removeAtEnd() {
+            try {
+                const response = await fetch('/remove_at_end', {
+                    method: 'POST',
+                });
+                const result = await response.json();
+                updateDisplay();
+                alert('Removed from end: ' + result.removed);
+            } catch (error) {
+                alert('Failed to remove from end: ' + error);
+            }
+        }
+
+        async function removeAt() {
+            const data = document.getElementById('remove-data-input').value;
+            try {
+                const response = await fetch('/remove_at', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: `data=${encodeURIComponent(data)}`
+                });
+                const result = await response.json();
+                updateDisplay();
+                alert('Removed: ' + result.removed);
+            } catch (error) {
+                alert('Failed to remove specific node: ' + error);
+            }
+        }
+        document.addEventListener('DOMContentLoaded', updateDisplay);
+    </script>
+</body>
+</html>
